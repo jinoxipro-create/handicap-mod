@@ -12,23 +12,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: handicap-mod/handicap-mod
+
     steps:
-      - name: Récupérer le code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Installer Java 21
-        uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: temurin
 
-      - name: Compiler le mod
+      - name: Build mod with Gradle
         run: |
           chmod +x gradlew
           ./gradlew build
 
-      - name: Récupérer le fichier JAR
+      - name: Upload mod JAR
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: handicap-mod
-          path: build/libs/*.jar
+          name: handicap-mod-jar
+          path: handicap-mod/handicap-mod/build/libs/*.jar
+          if-no-files-found: error
